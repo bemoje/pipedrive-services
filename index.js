@@ -10,6 +10,7 @@ Pipeprive.Configuration.apiToken = require('./API_TOKEN.json').token;
 const dealsController = Pipeprive.DealsController;
 const organizationsController = Pipeprive.OrganizationsController;
 const personsController = Pipeprive.PersonsController;
+const usersController = Pipeprive.UsersController;
 
 /**
  * Custom Error class for API GET-request errors
@@ -123,6 +124,26 @@ async function getAllPeople() {
 }
 
 /**
+ * Returns an array of all users
+ * @throws {APIGetRequestError} if API call is not successful
+ * @returns {Promise<Array<object>>}
+ */
+async function getAllUsers() {
+	try {
+		/*
+		const result = await usersController.getAllUsers()
+		if (result.success !== true) {
+			throw new APIGetRequestError(f.name + ' API call not successful')
+		}
+		return result.data
+		*/
+		return require('E:\\repos\\packages\\pipedrive-services\\temp\\allUsers.json')
+	} catch (e) {
+		console.log(e);
+	}
+}
+
+/**
  * Du kan se relationerne mellem Organisationer, Contacts og Deals/Leads (Bare glem leads) i vedhæftede diagram. En Deal
  * er en salgs mulighed vi arbejder på. Så en deal er altid tilknyttet en potentiel kunde (Organisation), som vi så har
  * en eller flere kontakter hos. Det jeg er ude efter er i første omgang, at trække en liste over alle "Åbne Deals". Der
@@ -140,19 +161,47 @@ async function main() {
 		const openDeals = await getAllOpenDeals()
 		const organizations = await getAllOrganizations()
 		const people = await getAllPeople()
-
+		const users = await getAllUsers()
 
 		//fs.writeFileSync('E:\\repos\\packages\\pipedrive-services\\temp\\allOpenDeals.json', JSON.stringify(openDeals), 'utf8');
 		//fs.writeFileSync('E:\\repos\\packages\\pipedrive-services\\temp\\allOrganizations.json', JSON.stringify(organizations), 'utf8');
 		//fs.writeFileSync('E:\\repos\\packages\\pipedrive-services\\temp\\allPeople.json', JSON.stringify(people), 'utf8');
+		//fs.writeFileSync('E:\\repos\\packages\\pipedrive-services\\temp\\allUsers.json', JSON.stringify(users), 'utf8');
 
 		// console.log(openDeals[10])
 		// console.log(organizations[10])
 		// console.log(people[10])
+		// console.log(users[10])
 
 		console.log('openDeals: ' + openDeals.length)
 		console.log('organizations: ' + organizations.length)
 		console.log('people: ' + people.length)
+		console.log('users: ' + users.length)
+
+
+		for (const deal of openDeals) {
+			if (deal.user_id) {
+				//console.log(deal)
+			}
+		}
+
+		// find alle open deals, som har anden ejer end TMJ
+		console.log(openDeals.find((value, i) => {
+			if (value.user_id) {
+				return value.user_id.name !== 'Thomas Møller Jensen'
+			} else {
+				return false
+			}
+		}))
+
+		// find alle kontaktpersoner, som har anden ejer end TMJ
+		console.log(people.find((value, i) => {
+			if (value.owner_id) {
+				return value.owner_id.name === 'Thomas Møller Jensen'
+			} else {
+				return false
+			}
+		}))
 
 	} catch (e) {
 		console.log(e);
