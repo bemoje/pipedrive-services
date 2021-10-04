@@ -17,10 +17,10 @@ const usersController = Pipeprive.UsersController;
  * Custom Error class for API GET-request errors
  */
 class APIGetRequestError extends Error {
-	constructor (message) {
-		super(message);
-		this.name = "APIGetRequestError";
-	}
+   constructor (message) {
+      super(message);
+      this.name = "APIGetRequestError";
+   }
 }
 
 /**
@@ -33,32 +33,32 @@ class APIGetRequestError extends Error {
  * @returns {Promise<Array<object>>}
  */
 async function depletePagination (f,options = {}) {
-	try {
-		const data = [];
-		let hasMoreItems = true;
-		let nextPaginationStart = 0;
-		while (hasMoreItems) {
-			options.start = nextPaginationStart;
-			options.limit = 500;
-			const result = await f(options);
-			if (result.success !== true) {
-				throw new APIGetRequestError(f.name + ' API call not successful');
-			}
-			if (result.data) {
-				for (let i = 0; i < result.data.length; i++) {
-					data.push(result.data[ i ]);
-				}
-			}
-			if (result.additional_data.pagination.more_items_in_collection) {
-				nextPaginationStart = result.additional_data.pagination.next_start;
-			} else {
-				hasMoreItems = false;
-			}
-		}
-		return data;
-	} catch (e) {
-		console.error(e);
-	}
+   try {
+      const data = [];
+      let hasMoreItems = true;
+      let nextPaginationStart = 0;
+      while (hasMoreItems) {
+         options.start = nextPaginationStart;
+         options.limit = 500;
+         const result = await f(options);
+         if (result.success !== true) {
+            throw new APIGetRequestError(f.name + ' API call not successful');
+         }
+         if (result.data) {
+            for (let i = 0; i < result.data.length; i++) {
+               data.push(result.data[ i ]);
+            }
+         }
+         if (result.additional_data.pagination.more_items_in_collection) {
+            nextPaginationStart = result.additional_data.pagination.next_start;
+         } else {
+            hasMoreItems = false;
+         }
+      }
+      return data;
+   } catch (e) {
+      console.error(e);
+   }
 }
 
 /**
@@ -69,15 +69,15 @@ async function depletePagination (f,options = {}) {
 * @returns {Promise<Array<object>>}
 */
 async function getNonPagination (f,options) {
-	try {
-		const result = await f(options);
-		if (result.success !== true) {
-			throw new APIGetRequestError(f.name + ' API call not successful');
-		}
-		return result.data;
-	} catch (e) {
+   try {
+      const result = await f(options);
+      if (result.success !== true) {
+         throw new APIGetRequestError(f.name + ' API call not successful');
+      }
+      return result.data;
+   } catch (e) {
 
-	}
+   }
 }
 
 /**
@@ -86,11 +86,11 @@ async function getNonPagination (f,options) {
  * @returns {Promise<Array<object>>}
  */
 async function getAllDeals () {
-	try {
-		return await depletePagination(dealsController.getAllDeals);
-	} catch (e) {
-		log.error(e);
-	}
+   try {
+      return await depletePagination(dealsController.getAllDeals);
+   } catch (e) {
+      log.error(e);
+   }
 }
 
 /**
@@ -99,18 +99,18 @@ async function getAllDeals () {
  * @returns {Promise<Array<object>>}
  */
 async function getAllOpenDeals () {
-	try {
-		const data = await getAllDeals();
-		const openDeals = [];
-		for (const deal of data) {
-			if (deal.status === 'open') {
-				openDeals.push(deal);
-			}
-		}
-		return openDeals;
-	} catch (e) {
-		log.error(e);
-	}
+   try {
+      const data = await getAllDeals();
+      const openDeals = [];
+      for (const deal of data) {
+         if (deal.status === 'open') {
+            openDeals.push(deal);
+         }
+      }
+      return openDeals;
+   } catch (e) {
+      log.error(e);
+   }
 }
 
 /**
@@ -119,11 +119,11 @@ async function getAllOpenDeals () {
  * @returns {Promise<Array<object>>}
  */
 async function getAllOrganizations () {
-	try {
-		return await depletePagination(organizationsController.getAllOrganizations);
-	} catch (e) {
-		log.error(e);
-	}
+   try {
+      return await depletePagination(organizationsController.getAllOrganizations);
+   } catch (e) {
+      log.error(e);
+   }
 }
 
 /**
@@ -132,11 +132,11 @@ async function getAllOrganizations () {
  * @returns {Promise<Array<object>>}
  */
 async function getAllPeople () {
-	try {
-		return await depletePagination(personsController.getAllPersons);
-	} catch (e) {
-		log.error(e);
-	}
+   try {
+      return await depletePagination(personsController.getAllPersons);
+   } catch (e) {
+      log.error(e);
+   }
 }
 
 /**
@@ -145,12 +145,12 @@ async function getAllPeople () {
  * @returns {Promise<Array<object>>}
  */
 async function getAllUsers () {
-	try {
-		return await getNonPagination(usersController.getAllUsers);
-	}
-	catch (e) {
-		log.error(e);
-	}
+   try {
+      return await getNonPagination(usersController.getAllUsers);
+   }
+   catch (e) {
+      log.error(e);
+   }
 }
 
 /**
@@ -160,13 +160,13 @@ async function getAllUsers () {
  * @returns {Promise<Array<object>>}
  */
 async function listPersonsOfAnOrganization (id) {
-	try {
-		return await depletePagination(organizationsController.listPersonsOfAnOrganization,{
-			id
-		});
-	} catch (e) {
-		log.error(e);
-	}
+   try {
+      return await depletePagination(organizationsController.listPersonsOfAnOrganization,{
+         id
+      });
+   } catch (e) {
+      log.error(e);
+   }
 }
 
 /**
@@ -175,7 +175,7 @@ async function listPersonsOfAnOrganization (id) {
  * @returns {number} integer ID
  */
 function getDealOrganizationOwnerID (deal) {
-	return deal.org_id.owner_id;
+   return deal.org_id.owner_id;
 }
 
 /**
@@ -184,7 +184,7 @@ function getDealOrganizationOwnerID (deal) {
  * @returns {number} integer ID
  */
 function getDealOwnerID (deal) {
-	return deal.user_id.value;
+   return deal.user_id.value;
 }
 
 /**
@@ -193,7 +193,7 @@ function getDealOwnerID (deal) {
  * @returns {string}
  */
 function getDealOwnerName (deal) {
-	return deal.user_id.name;
+   return deal.user_id.name;
 }
 
 /**
@@ -202,7 +202,7 @@ function getDealOwnerName (deal) {
  * @returns {string}
  */
 function getDealTitle (deal) {
-	return deal.title;
+   return deal.title;
 }
 
 /**
@@ -211,7 +211,7 @@ function getDealTitle (deal) {
  * @returns {number} integer ID
  */
 function getOrganizationID (organization) {
-	return organization.id;
+   return organization.id;
 }
 
 /**
@@ -220,7 +220,7 @@ function getOrganizationID (organization) {
  * @returns {string}
  */
 function getOrganizationName (organization) {
-	return organization.name;
+   return organization.name;
 }
 
 /**
@@ -229,7 +229,7 @@ function getOrganizationName (organization) {
  * @returns {number} integer ID
  */
 function getOrganizationOwnerID (organization) {
-	return organization.owner_id.value;
+   return organization.owner_id.value;
 }
 
 /**
@@ -238,7 +238,7 @@ function getOrganizationOwnerID (organization) {
  * @returns {string}
  */
 function getOrganizationOwnerName (organization) {
-	return organization.owner_id.name;
+   return organization.owner_id.name;
 }
 
 /**
@@ -247,7 +247,7 @@ function getOrganizationOwnerName (organization) {
  * @returns {number} integer
  */
 function getOrganizationPeopleCount (organization) {
-	return organization.people_count;
+   return organization.people_count;
 }
 
 /**
@@ -256,7 +256,7 @@ function getOrganizationPeopleCount (organization) {
  * @returns {number} integer ID
  */
 function getPersonOwnerID (person) {
-	return person.owner_id.value;
+   return person.owner_id.value;
 }
 
 /**
@@ -265,7 +265,7 @@ function getPersonOwnerID (person) {
  * @returns {string}
  */
 function getPersonName (person) {
-	return person.name;
+   return person.name;
 }
 
 /**
@@ -278,57 +278,57 @@ function getPersonName (person) {
  * er owner, og så sætte vedkommende til at være owner af alle de Contacts som er tilknyttet organisationen.
  */
 async function main () {
-	try {
-		// Pre-download as much as the needed data as possible for faster overall runtime
-		const users = await getAllUsers();
-		log.info('INFO: All users downloaded.');
+   try {
+      // Pre-download as much as the needed data as possible for faster overall runtime
+      const users = await getAllUsers();
+      log.info('INFO: All users downloaded.');
 
-		const openDeals = await getAllOpenDeals();
-		log.info('INFO: All open deals downloaded.');
+      const openDeals = await getAllOpenDeals();
+      log.info('INFO: All open deals downloaded.');
 
-		const organizations = await getAllOrganizations();
-		log.info('INFO: All organizations downloaded.');
+      const organizations = await getAllOrganizations();
+      log.info('INFO: All organizations downloaded.');
 
-		// Ensure deal owners are also owners of the organizations related to the deal.
-		for (const deal of openDeals) {
-			if (!deal.org_id) {
-				log.warn('WARNING: No organization found related to open deal ' + getDealTitle(deal));
-				continue;
-			}
-			if (getDealOwnerID(deal) !== getDealOrganizationOwnerID(deal)) {
-				log.trace(`ACTION: Set deal owner (${getDealOwnerName(deal)}) to be owner of organization ${getDealOwnerName(deal)}`);
-			}
-			log.info('INFO: Finished processing deal: ' + getDealTitle(deal));
-		}
+      // Ensure deal owners are also owners of the organizations related to the deal.
+      for (const deal of openDeals) {
+         if (!deal.org_id) {
+            log.warn('WARNING: No organization found related to open deal ' + getDealTitle(deal));
+            continue;
+         }
+         if (getDealOwnerID(deal) !== getDealOrganizationOwnerID(deal)) {
+            log.trace(`ACTION: Set deal owner (${getDealOwnerName(deal)}) to be owner of organization ${getDealOwnerName(deal)}`);
+         }
+         log.info('INFO: Finished processing deal: ' + getDealTitle(deal));
+      }
 
-		// Ensure owner of all organizations also owns their respective contact people.
-		for (const organization of organizations) {
-			if (!organization.owner_id) {
-				log.warn('WARNING: Organization has no owner: ' + getOrganizationName(organization));
-				continue;
-			}
-			if (getOrganizationPeopleCount(organization) < 1) {
-				log.info(`INFO: Organization has no contact people: ${getOrganizationName(organization)}`);
-				continue;
-			}
-			const people = await listPersonsOfAnOrganization(getOrganizationID(organization));
-			for (const person of people) {
-				if (!person.owner_id) {
-					log.warn('WARNING: Contact person has no owner: ' + getPersonName(person));
-					continue;
-				}
-				if (getPersonOwnerID(person) !== getOrganizationOwnerID(organization)) {
-					log.trace(`ACTION: Set (${getOrganizationOwnerName(organization)}) to be owner of contact person ${getPersonName(person)}, ${getOrganizationName(organization)}`);
-				}
-				log.info('INFO: Finished processing contact person: ' + getPersonName(person));
-			}
-			log.info('INFO: Finished processing organization: ' + getOrganizationName(organization));
-		}
-	} catch (e) {
-		log.error(e);
-	}
+      // Ensure owner of all organizations also owns their respective contact people.
+      for (const organization of organizations) {
+         if (!organization.owner_id) {
+            log.warn('WARNING: Organization has no owner: ' + getOrganizationName(organization));
+            continue;
+         }
+         if (getOrganizationPeopleCount(organization) < 1) {
+            log.info(`INFO: Organization has no contact people: ${getOrganizationName(organization)}`);
+            continue;
+         }
+         const people = await listPersonsOfAnOrganization(getOrganizationID(organization));
+         for (const person of people) {
+            if (!person.owner_id) {
+               log.warn('WARNING: Contact person has no owner: ' + getPersonName(person));
+               continue;
+            }
+            if (getPersonOwnerID(person) !== getOrganizationOwnerID(organization)) {
+               log.trace(`ACTION: Set (${getOrganizationOwnerName(organization)}) to be owner of contact person ${getPersonName(person)}, ${getOrganizationName(organization)}`);
+            }
+            log.info('INFO: Finished processing contact person: ' + getPersonName(person));
+         }
+         log.info('INFO: Finished processing organization: ' + getOrganizationName(organization));
+      }
+   } catch (e) {
+      log.error(e);
+   }
 }
 
 main().catch((e) => {
-	log.error(e);
+   log.error(e);
 });
