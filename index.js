@@ -1,17 +1,11 @@
-const express = require('express');
-const app = express();
 const Pipeprive = require('pipedrive');
-const fs = require('fs');
 const log = require('loglevel');
-
-// set log level
-log.setLevel("info");
 
 // import API token
 Pipeprive.Configuration.apiToken = require('./API_TOKEN.json').token;
 
-// set express app port
-const PORT = 1800;
+// set log level
+log.setLevel("info");
 
 // Pipeprive controllers
 const dealsController = Pipeprive.DealsController;
@@ -114,7 +108,6 @@ async function getAllOpenDeals () {
 			}
 		}
 		return openDeals;
-		//return require('E:\\repos\\packages\\pipedrive-services\\temp\\allOpenDeals.json');
 	} catch (e) {
 		log.error(e);
 	}
@@ -128,7 +121,6 @@ async function getAllOpenDeals () {
 async function getAllOrganizations () {
 	try {
 		return await depletePagination(organizationsController.getAllOrganizations);
-		//return require('E:\\repos\\packages\\pipedrive-services\\temp\\allOrganizations.json');
 	} catch (e) {
 		log.error(e);
 	}
@@ -142,7 +134,6 @@ async function getAllOrganizations () {
 async function getAllPeople () {
 	try {
 		return await depletePagination(personsController.getAllPersons);
-		//return require('E:\\repos\\packages\\pipedrive-services\\temp\\allPeople.json');
 	} catch (e) {
 		log.error(e);
 	}
@@ -156,7 +147,6 @@ async function getAllPeople () {
 async function getAllUsers () {
 	try {
 		return await getNonPagination(usersController.getAllUsers);
-		//return require('E:\\repos\\packages\\pipedrive-services\\temp\\allUsers.json');
 	}
 	catch (e) {
 		log.error(e);
@@ -289,7 +279,7 @@ function getPersonName (person) {
  */
 async function main () {
 	try {
-		// Create memory cache
+		// Pre-download as much as the needed data as possible for faster overall runtime
 		const users = await getAllUsers();
 		log.info('INFO: All users downloaded.');
 
@@ -298,11 +288,6 @@ async function main () {
 
 		const organizations = await getAllOrganizations();
 		log.info('INFO: All organizations downloaded.');
-
-		//fs.writeFileSync('E:\\repos\\packages\\pipedrive-services\\temp\\allOpenDeals.json', JSON.stringify(openDeals), 'utf8');
-		//fs.writeFileSync('E:\\repos\\packages\\pipedrive-services\\temp\\allOrganizations.json', JSON.stringify(organizations), 'utf8');
-		//fs.writeFileSync('E:\\repos\\packages\\pipedrive-services\\temp\\allUsers.json', JSON.stringify(users), 'utf8');
-
 
 		// Ensure deal owners are also owners of the organizations related to the deal.
 		for (const deal of openDeals) {
@@ -347,15 +332,3 @@ async function main () {
 main().catch((e) => {
 	log.error(e);
 });
-
-
-/*
-app.listen(PORT, () => {
-	console.log(`Listening on port ${PORT}`);
-});
-
-app.get('/', async (req, res) => {
-	const user = await lib.UsersController.getCurrentUserData();
-	res.send(user);
-});
-*/
