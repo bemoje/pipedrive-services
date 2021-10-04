@@ -170,12 +170,39 @@ async function listPersonsOfAnOrganization (id) {
 }
 
 /**
- * Returns the ID of an organization.
- * @param {object} organization
+ * Returns the ID of a deal.
+ * @param {object} deal
+ * @returns {number} integer ID
+ */
+function getDealID (deal) {
+   return deal.id;
+}
+
+/**
+ * Returns the ID of the owner of an organization of a deal.
+ * @param {object} deal
  * @returns {number} integer ID
  */
 function getDealOrganizationOwnerID (deal) {
    return deal.org_id.owner_id;
+}
+
+/**
+ * Returns the ID of an organization of a deal.
+ * @param {object} deal
+ * @returns {number} integer ID
+ */
+function getDealOrganizationID (deal) {
+   return deal.org_id.value;
+}
+
+/**
+ * Returns the name of an organization of a deal.
+ * @param {object} deal
+ * @returns {string}
+ */
+function getDealOrganizationName (deal) {
+   return deal.org_id.name;
 }
 
 /**
@@ -251,7 +278,16 @@ function getOrganizationPeopleCount (organization) {
 }
 
 /**
- * Returns the owner ID of a contact person.
+ * Returns the ID of a contact person.
+ * @param {object} person
+ * @returns {number} integer ID
+ */
+function getPersonID (person) {
+   return person.id;
+}
+
+/**
+ * Returns the ID of the owner of a contact person.
  * @param {object} person
  * @returns {number} integer ID
  */
@@ -279,32 +315,30 @@ function getPersonName (person) {
  */
 async function main () {
    try {
-      // Pre-download as much as the needed data as possible for faster overall runtime
-      const users = await getAllUsers();
-      log.info('INFO: All users downloaded.');
-
+      // Ensure deal owners are also owners of the organizations related to the deal.
       const openDeals = await getAllOpenDeals();
       log.info('INFO: All open deals downloaded.');
-
-      const organizations = await getAllOrganizations();
-      log.info('INFO: All organizations downloaded.');
-
-      // Ensure deal owners are also owners of the organizations related to the deal.
       for (const deal of openDeals) {
          if (!deal.org_id) {
-            log.warn('WARNING: No organization found related to open deal ' + getDealTitle(deal));
+            log.info('WARNING: No organization found related to open deal ' + getDealTitle(deal));
             continue;
          }
          if (getDealOwnerID(deal) !== getDealOrganizationOwnerID(deal)) {
-            log.trace(`ACTION: Set deal owner (${getDealOwnerName(deal)}) to be owner of organization ${getDealOwnerName(deal)}`);
+            await organizationsController.updateAnOrganization({
+               id: getDealOrganizationID(deal),
+               ownerId: getDealOwnerID(deal)
+            });
+            log.info(`ACTION: Made deal owner (${getDealOwnerName(deal)}) the owner also of organization: ${getDealOrganizationName(deal)}`);
          }
          log.info('INFO: Finished processing deal: ' + getDealTitle(deal));
       }
 
       // Ensure owner of all organizations also owns their respective contact people.
+      const organizations = await getAllOrganizations();
+      log.info('INFO: All organizations downloaded.');
       for (const organization of organizations) {
          if (!organization.owner_id) {
-            log.warn('WARNING: Organization has no owner: ' + getOrganizationName(organization));
+            log.info('WARNING: Organization has no owner: ' + getOrganizationName(organization));
             continue;
          }
          if (getOrganizationPeopleCount(organization) < 1) {
@@ -314,11 +348,15 @@ async function main () {
          const people = await listPersonsOfAnOrganization(getOrganizationID(organization));
          for (const person of people) {
             if (!person.owner_id) {
-               log.warn('WARNING: Contact person has no owner: ' + getPersonName(person));
+               log.info('WARNING: Contact person has no owner: ' + getPersonName(person));
                continue;
             }
             if (getPersonOwnerID(person) !== getOrganizationOwnerID(organization)) {
-               log.trace(`ACTION: Set (${getOrganizationOwnerName(organization)}) to be owner of contact person ${getPersonName(person)}, ${getOrganizationName(organization)}`);
+               await personsController.updateAPerson({
+                  id: getPersonID(person),
+                  ownerId: getOrganizationOwnerID(organization)
+               });
+               log.info(`ACTION: Made [${getOrganizationOwnerName(organization)}] the owner of contact person: ${getPersonName(person)}, ${getOrganizationName(organization)}`);
             }
             log.info('INFO: Finished processing contact person: ' + getPersonName(person));
          }
