@@ -172,7 +172,7 @@ async function listPersonsOfAnOrganization (id) {
 /**
  * Returns the ID of a deal.
  * @param {object} deal
- * @returns {number} integer ID
+ * @returns {number}
  */
 function getDealID (deal) {
    return deal.id;
@@ -181,7 +181,7 @@ function getDealID (deal) {
 /**
  * Returns the ID of the owner of an organization of a deal.
  * @param {object} deal
- * @returns {number} integer ID
+ * @returns {number}
  */
 function getDealOrganizationOwnerID (deal) {
    return deal.org_id.owner_id;
@@ -190,7 +190,7 @@ function getDealOrganizationOwnerID (deal) {
 /**
  * Returns the ID of an organization of a deal.
  * @param {object} deal
- * @returns {number} integer ID
+ * @returns {number}
  */
 function getDealOrganizationID (deal) {
    return deal.org_id.value;
@@ -208,7 +208,7 @@ function getDealOrganizationName (deal) {
 /**
  * Returns the ID of a deal's owner.
  * @param {object} deal
- * @returns {number} integer ID
+ * @returns {number}
  */
 function getDealOwnerID (deal) {
    return deal.user_id.value;
@@ -235,7 +235,7 @@ function getDealTitle (deal) {
 /**
  * Returns the ID of an organization.
  * @param {object} organization
- * @returns {number} integer ID
+ * @returns {number}
  */
 function getOrganizationID (organization) {
    return organization.id;
@@ -253,7 +253,7 @@ function getOrganizationName (organization) {
 /**
  * Returns the ID of an organization.
  * @param {object} organization
- * @returns {number} integer ID
+ * @returns {number}
  */
 function getOrganizationOwnerID (organization) {
    return organization.owner_id.value;
@@ -271,7 +271,7 @@ function getOrganizationOwnerName (organization) {
 /**
  * Returns the number of contact people an organization has.
  * @param {object} organization
- * @returns {number} integer
+ * @returns {number}
  */
 function getOrganizationPeopleCount (organization) {
    return organization.people_count;
@@ -280,7 +280,7 @@ function getOrganizationPeopleCount (organization) {
 /**
  * Returns the ID of a contact person.
  * @param {object} person
- * @returns {number} integer ID
+ * @returns {number}
  */
 function getPersonID (person) {
    return person.id;
@@ -289,7 +289,7 @@ function getPersonID (person) {
 /**
  * Returns the ID of the owner of a contact person.
  * @param {object} person
- * @returns {number} integer ID
+ * @returns {number}
  */
 function getPersonOwnerID (person) {
    return person.owner_id.value;
